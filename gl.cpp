@@ -58,40 +58,50 @@ int main() {
 
 	
 	// Указывание вершин (и буферов) и настройка вершинных атрибутов
-	float vertices[] = {
+	float verticesOrange[] = {
 			-1.0f,-0.5f, 0.0f,
 			 0.0f,-0.5f, 0.0f,
-			-0.5f, 0.5f, 0.0f,
-			 0.0f,-0.5f, 0.0f,
-			 1.0f,-0.5f, 0.0f,
-			 0.5f, 0.5f, 0.0f};
+			-0.5f, 0.5f, 0.0f };
+
 	/*unsigned int indices[] = {
 			0, 1, 3,
 			1, 2, 3 };
 	*/
+	float verticesRed[] = {
+			 0.0f,-0.5f, 0.0f,
+			 1.0f,-0.5f, 0.0f,
+			 0.5f, 0.5f, 0.0f};
 
-	unsigned int shaderProgram = LoadShaders("shaders/vertexShader.src", "shaders/fragmentShader.src");
+
+	unsigned int shaderProgramOrange, shaderProgramRed;
+	LoadShaders("shaders/vertexShader.src", "shaders/fragmentShader.src", "shaders/fragmentShader2.src", &shaderProgramOrange, &shaderProgramRed);
 	
 
-	unsigned int VBO, VAO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	unsigned int VBOs[2], VAOs[2], EBO;
+	glGenVertexArrays(2, VAOs);
+	glGenBuffers(2, VBOs);
+	
+	
+	glBindVertexArray(VAOs[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesOrange), verticesOrange, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	/*glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	*/
+
+	glBindVertexArray(VAOs[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRed), verticesRed, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 
 
-
+	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Отвязываем VBO
+	//glBindVertexArray(0); // Отвязываем VAO
 
 
 	// Цикл рендеринга в окне
@@ -102,20 +112,23 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);  
+		glUseProgram(shaderProgramOrange);
+		glBindVertexArray(VAOs[0]);  
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(0);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glUseProgram(shaderProgramRed);
+		glBindVertexArray(VAOs[1]);  
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(2, VAOs);
+	glDeleteBuffers(2, VBOs);
 
 	glfwTerminate();
 
