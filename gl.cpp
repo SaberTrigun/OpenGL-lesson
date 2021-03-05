@@ -5,6 +5,7 @@
 #include "include/glad/glad.h"
 #include "include/GLFW/glfw3.h"
 #include <GL/gl.h>
+#include <cmath>
 #include "loadShaders.cpp"
 // void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // void processInput(GLFWwindow *window);
@@ -58,23 +59,24 @@ int main() {
 
 	
 	// Указывание вершин (и буферов) и настройка вершинных атрибутов
-	float verticesOrange[] = {
-			-1.0f,-0.5f, 0.0f,
-			 0.0f,-0.5f, 0.0f,
-			-0.5f, 0.5f, 0.0f };
+	float verticesLeft[] = {
+			-1.0f,-0.5f, 0.0f,	
+			 0.0f,-0.5f, 0.0f,	
+			-0.5f, 0.5f, 0.0f};
 
 	/*unsigned int indices[] = {
 			0, 1, 3,
 			1, 2, 3 };
-	*/
-	float verticesRed[] = {
-			 0.0f,-0.5f, 0.0f,
-			 1.0f,-0.5f, 0.0f,
-			 0.5f, 0.5f, 0.0f};
+	*/	
+	float verticesRight[] = {
+			 0.0f,-0.5f, 0.0f,	  1.0f, 0.0f, 0.0f,
+			 1.0f,-0.5f, 0.0f,	  0.0f, 1.0f, 0.0f,
+			 0.5f, 0.5f, 0.0f,	  0.0f, 0.0f, 1.0f} ;
+	
 
-
-	unsigned int shaderProgramOrange, shaderProgramRed;
-	LoadShaders("shaders/vertexShader.src", "shaders/fragmentShader.src", "shaders/fragmentShader2.src", &shaderProgramOrange, &shaderProgramRed);
+	unsigned int shaderProgramLeft, shaderProgramRight;
+	LoadShaders("shaders/lessTwo/vertexShaderLeft.src", "shaders/lessTwo/fragmentShaderLeft.src", &shaderProgramLeft);
+	LoadShaders("shaders/lessTwo/vertexShaderRight.src", "shaders/lessTwo/fragmentShaderRight.src", &shaderProgramRight);
 	
 
 	unsigned int VBOs[2], VAOs[2], EBO;
@@ -84,21 +86,23 @@ int main() {
 	
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesOrange), verticesOrange, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesLeft), verticesLeft, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	/*glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
 	*/
-
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRed), verticesRed, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRight), verticesRight, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
+	glVertexAttribPointer(1, 3,  GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+	
 
 	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Отвязываем VBO
 	//glBindVertexArray(0); // Отвязываем VAO
@@ -112,15 +116,20 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgramOrange);
+		glUseProgram(shaderProgramLeft);
+		float timeValue		= glfwGetTime();
+		float greenValue 	= sin(timeValue) / 2.0f + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgramLeft, "ourColor");
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		glBindVertexArray(VAOs[0]);  
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glUseProgram(shaderProgramRed);
+		glUseProgram(shaderProgramRight);
 		glBindVertexArray(VAOs[1]);  
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();

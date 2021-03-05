@@ -4,11 +4,11 @@
 #include <fstream>
 #include <sstream>
 
-void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, const char * fragmentFilePath2, unsigned int* shaderProgramOrangePtr, unsigned int* shaderProgramRedPtr){
+void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, /*const char * fragmentFilePath2,*/ unsigned int* shaderProgramPtr/*, unsigned int* shaderProgramRedPtr*/){
 	// Создаем шейдеры
-	GLuint vertexShaderID		= glCreateShader(GL_VERTEX_SHADER);
-	GLuint fragmentShaderOrange	= glCreateShader(GL_FRAGMENT_SHADER);
-	GLuint fragmentShaderRed	= glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint vertexShaderID	= glCreateShader(GL_VERTEX_SHADER);
+	GLuint fragmentShader	= glCreateShader(GL_FRAGMENT_SHADER);
+	//GLuint fragmentShaderRed	= glCreateShader(GL_FRAGMENT_SHADER);
 
 
 	// Загружаем код Вершинного Шейдера из файла
@@ -33,6 +33,7 @@ void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, con
 	}
 
 	// Загружаем код Фрагментного шейдера из файла
+	/*
 	std::string fragmentShaderSrc2;
 	std::ifstream fragmentShaderStream2(fragmentFilePath2, std::ios::in);
 	if(fragmentShaderStream2.is_open()){
@@ -41,7 +42,7 @@ void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, con
 	    fragmentShaderSrc2 = sstr.str();
 	    fragmentShaderStream2.close();
 	}
-
+	*/
 	int success;
 	char infoLog[512];
 
@@ -56,17 +57,18 @@ void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, con
 		std::cout << "Error vertexShader compile..." << infoLog << std::endl;
 	}
 
-	std::cout << "Compile fragment shader Orange..." << std::endl;
+	std::cout << "Compile fragment shader..." << std::endl;
 	char const * fragmentShaderSrcPtr = fragmentShaderSrc.c_str();
-	glShaderSource(fragmentShaderOrange, 1, &fragmentShaderSrcPtr, NULL);
-	glCompileShader(fragmentShaderOrange);
-	glGetShaderiv(fragmentShaderOrange, GL_COMPILE_STATUS, &success);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSrcPtr, NULL);
+	glCompileShader(fragmentShader);
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(fragmentShaderOrange, 512, NULL, infoLog);
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		std::cout << "Error fragmentShader compile..." << infoLog << std::endl;
 	}
 
+	/*
 	std::cout << "Compile fragment shader Red..." << std::endl;
 	char const * fragmentShaderSrcPtr2 = fragmentShaderSrc2.c_str();
 	glShaderSource(fragmentShaderRed, 1, &fragmentShaderSrcPtr2, NULL);
@@ -77,20 +79,21 @@ void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, con
 		glGetShaderInfoLog(fragmentShaderRed, 512, NULL, infoLog);
 		std::cout << "Error fragmentShader compile..." << infoLog << std::endl;
 	}
+	*/
 
-
-	std::cout << "Compile shader program Orange..." << std::endl;
-	unsigned int shaderProgramOrange = glCreateProgram();
-	glAttachShader(shaderProgramOrange, vertexShaderID);
-	glAttachShader(shaderProgramOrange, fragmentShaderOrange);
-	glLinkProgram(shaderProgramOrange);
-	glGetProgramiv(shaderProgramOrange, GL_LINK_STATUS, &success);
+	std::cout << "Compile shader program..." << std::endl;
+	unsigned int shaderProgram= glCreateProgram();
+	glAttachShader(shaderProgram, vertexShaderID);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetProgramInfoLog(shaderProgramOrange, 512, NULL, infoLog);
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		std::cout << "Error shaderProgram compile..." << infoLog << std::endl;
 	}
 
+	/*
 	std::cout << "Compile shader program Red..." << std::endl;
 	unsigned int shaderProgramRed = glCreateProgram();
 	glAttachShader(shaderProgramRed, vertexShaderID);
@@ -102,11 +105,13 @@ void LoadShaders(const char * vertexFilePath, const char * fragmentFilePath, con
 		glGetProgramInfoLog(shaderProgramRed, 512, NULL, infoLog);
 		std::cout << "Error shaderProgram compile..." << infoLog << std::endl;
 	}
-	
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderOrange);
-	glDeleteShader(fragmentShaderRed);
+	*/
 
-	*shaderProgramOrangePtr= shaderProgramOrange;
-	*shaderProgramRedPtr = shaderProgramRed;
+	glDeleteShader(vertexShaderID);
+	glDeleteShader(fragmentShader);
+	//glDeleteShader(fragmentShaderRed);
+
+	*shaderProgramPtr = shaderProgram;
+	//*shaderProgramRedPtr = shaderProgramRed;
+	
 }	
