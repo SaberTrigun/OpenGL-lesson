@@ -65,16 +65,13 @@ int main() {
 			 0.0f,-0.5f, 0.0f,	
 			-0.5f, 0.5f, 0.0f};
 
-	/*unsigned int indices[] = {
-			0, 1, 3,
-			1, 2, 3 };
-	*/	
 	float verticesRight[] = {
-			 0.0f,-0.5f, 0.0f,	  1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+			 1.0f, 0.5f, 0.0f,	  1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
 			 1.0f,-0.5f, 0.0f,	  0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-			 0.0f, 0.5f, 0.0f,	  0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-			 1.0f, 0.5f, 0.0f,	  1.0f, 1.0f, 0.0f,	0.0f, 1.0f};
+			 0.0f,-0.5f, 0.0f,	  0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
+			 0.0f, 0.5f, 0.0f,	  1.0f, 1.0f, 0.0f,	0.0f, 1.0f};
 
+	
 	unsigned int indices [] = {
 			 0, 1, 3,
 			 1, 2, 3};
@@ -83,8 +80,8 @@ int main() {
 
 
 	unsigned int shaderProgramLeft, shaderProgramRight;
-	LoadShaders("shaders/lessTwo/vertexShaderLeft.src", "shaders/lessTwo/fragmentShaderLeft.src", &shaderProgramLeft);
-	LoadShaders("shaders/lessTwo/vertexShaderRight.src", "shaders/lessTwo/fragmentShaderRight.src", &shaderProgramRight);
+	LoadShaders("shaders/lessThree/vertexShaderLeft.src", "shaders/lessThree/fragmentShaderLeft.src", &shaderProgramLeft);
+	LoadShaders("shaders/lessThree/vertexShaderRight.src", "shaders/lessThree/fragmentShaderRight.src", &shaderProgramRight);
 	
 
 	unsigned int VBOs[2], VAOs[2], EBO;
@@ -117,7 +114,7 @@ int main() {
 	
 
 	//////////////// Загрузка текстуры /////////////////
-	unsigned int texture;
+	unsigned int texture, texture2;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	
@@ -128,6 +125,7 @@ int main() {
 
 
 	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char *data = stbi_load("textures/tileTexture.jpg", &width, &height, &nrChannels, 0);
 	if (data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -141,8 +139,31 @@ int main() {
 	/////////////// Конец загрузки текстуры ///////////
 	
 
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
+	data = stbi_load("textures/smileTexture.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load texture" << std::endl;
+	
+	
+	stbi_image_free(data);
+	/////////////// Конец загрузки текстуры ///////////
+	
+
+	glUseProgram(shaderProgramRight);
+	glUniform1i(glGetUniformLocation(shaderProgramRight, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramRight, "texture2"), 1);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Отвязываем VBO
 	//glBindVertexArray(0); // Отвязываем VAO
@@ -172,18 +193,21 @@ int main() {
 
 		glBindVertexArray(VAOs[0]);  
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		//////////////////////////////////////////////
 
 
 		////////// Правый ////////////////////////////
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUseProgram(shaderProgramRight);
 		glBindVertexArray(VAOs[1]);  
 		
 		//verticesRight[4] = sin(timeValue) / 2.0f + 0.5;
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
 		
@@ -196,6 +220,7 @@ int main() {
 
 	glDeleteVertexArrays(2, VAOs);
 	glDeleteBuffers(2, VBOs);
+	glDeleteBuffers(1, &EBO);
 
 	glfwTerminate();
 
