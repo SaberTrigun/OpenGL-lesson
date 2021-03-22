@@ -8,6 +8,9 @@
 #include <cmath>
 #include "loadShaders.cpp"
 #include "stb_image.h"
+#include "include/glm/glm/glm.hpp"
+#include "include/glm/glm/gtc/matrix_transform.hpp"
+#include "include/glm/glm/gtc/type_ptr.hpp"
 // void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // void processInput(GLFWwindow *window);
 // Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш на клавиатуре
@@ -66,10 +69,10 @@ int main() {
 			-0.5f, 0.5f, 0.0f};
 
 	float verticesRight[] = {
-			 1.0f, 0.5f, 0.0f,	  1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-			 1.0f,-0.5f, 0.0f,	  0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-			 0.0f,-0.5f, 0.0f,	  0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-			 0.0f, 0.5f, 0.0f,	  1.0f, 1.0f, 0.0f,	0.0f, 1.0f};
+			 1.0f, 0.5f, 0.0f,    1.0f, 1.0f,
+			 1.0f,-0.5f, 0.0f,    1.0f, 0.0f,
+			 0.0f,-0.5f, 0.0f,    0.0f, 0.0f,
+			 0.0f, 0.5f, 0.0f,    0.0f, 1.0f};
 
 	
 	unsigned int indices [] = {
@@ -80,8 +83,8 @@ int main() {
 
 
 	unsigned int shaderProgramLeft, shaderProgramRight;
-	LoadShaders("shaders/lessThree/vertexShaderLeft.src", "shaders/lessThree/fragmentShaderLeft.src", &shaderProgramLeft);
-	LoadShaders("shaders/lessThree/vertexShaderRight.src", "shaders/lessThree/fragmentShaderRight.src", &shaderProgramRight);
+	LoadShaders("shaders/lessFour/vertexShaderLeft.src", "shaders/lessFour/fragmentShaderLeft.src", &shaderProgramLeft);
+	LoadShaders("shaders/lessFour/vertexShaderRight.src", "shaders/lessFour/fragmentShaderRight.src", &shaderProgramRight);
 	
 
 	unsigned int VBOs[2], VAOs[2], EBO;
@@ -105,12 +108,10 @@ int main() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3,  GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 2,  GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2,  GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
-	glEnableVertexAttribArray(2);
 	
 
 	//////////////// Загрузка текстуры /////////////////
@@ -168,6 +169,17 @@ int main() {
 	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Отвязываем VBO
 	//glBindVertexArray(0); // Отвязываем VAO
 
+	
+		glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(-0.2f, 0.0f, 0.0f));
+		vec = trans * vec;
+	//	std::cout << vec.x << std::endl;
+	//	std::cout << vec.y << std::endl;
+	//	std::cout << vec.z << std::endl;
+
+		trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+		trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));	
 
 	// Цикл рендеринга в окне
 	while (!glfwWindowShouldClose(window))
@@ -202,7 +214,16 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
+
+		
+		
 		glUseProgram(shaderProgramRight);
+
+		unsigned int transformLoc = glGetUniformLocation(shaderProgramRight, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+
+
 		glBindVertexArray(VAOs[1]);  
 		
 		//verticesRight[4] = sin(timeValue) / 2.0f + 0.5;
