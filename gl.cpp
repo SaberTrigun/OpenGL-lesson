@@ -170,16 +170,6 @@ int main() {
 	//glBindVertexArray(0); // Отвязываем VAO
 
 	
-		glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::translate(trans, glm::vec3(-0.2f, 0.0f, 0.0f));
-		vec = trans * vec;
-	//	std::cout << vec.x << std::endl;
-	//	std::cout << vec.y << std::endl;
-	//	std::cout << vec.z << std::endl;
-
-		trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-		trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));	
 
 	// Цикл рендеринга в окне
 	while (!glfwWindowShouldClose(window))
@@ -215,12 +205,14 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
-		
+		glm::mat4 transform = glm::mat4(1.0f); // сначала инициализируем единичную матрицу
+		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));	
 		
 		glUseProgram(shaderProgramRight);
 
 		unsigned int transformLoc = glGetUniformLocation(shaderProgramRight, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
 
 
