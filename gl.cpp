@@ -83,8 +83,8 @@ int main() {
 
 
 	unsigned int shaderProgramLeft, shaderProgramRight;
-	LoadShaders("shaders/lessFour/vertexShaderLeft.src", "shaders/lessFour/fragmentShaderLeft.src", &shaderProgramLeft);
-	LoadShaders("shaders/lessFour/vertexShaderRight.src", "shaders/lessFour/fragmentShaderRight.src", &shaderProgramRight);
+	LoadShaders("shaders/lessFive/vertexShaderLeft.src", "shaders/lessFive/fragmentShaderLeft.src", &shaderProgramLeft);
+	LoadShaders("shaders/lessFive/vertexShaderRight.src", "shaders/lessFive/fragmentShaderRight.src", &shaderProgramRight);
 	
 
 	unsigned int VBOs[2], VAOs[2], EBO;
@@ -207,16 +207,27 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
-		glm::mat4 transform = glm::mat4(1.0f); // сначала инициализируем единичную матрицу
-		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));	
-		
+
+
 		glUseProgram(shaderProgramRight);
 
-		unsigned int transformLoc = glGetUniformLocation(shaderProgramRight, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 projection = glm::mat4(1.0f);
 
+		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+		int modelLoc = glGetUniformLocation(shaderProgramRight, "model");
+		int viewLoc   = glGetUniformLocation(shaderProgramRight, "view");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgramRight, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+		
 
 		glBindVertexArray(VAOs[1]);  
 		
