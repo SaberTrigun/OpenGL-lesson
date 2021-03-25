@@ -182,16 +182,18 @@ int main() {
 		/////////// Левый /////////////////////////////
 		glUseProgram(shaderProgramLeft);
 		float timeValue		= glfwGetTime();
-		float redVAlue		= sin(timeValue) / 2.0f + 0.5f;
+		float redValue		= tan(timeValue) / 2.0f + 0.5f;
 		float greenValue 	= -sin(timeValue) / 2.0f + 0.5f;
 		float blueValue		= cos(timeValue) / 2.0f + 0.5f;
-		std::cout << blueValue<< std::endl;
-		int vertexColorLocation = glGetUniformLocation(shaderProgramLeft, "ourColor");
-		glUniform4f(vertexColorLocation, redVAlue, greenValue, blueValue, 1.0f);
 
-		float offset = 0.5;
-		int zap = glGetUniformLocation(shaderProgramLeft, "uniPos");
-		glUniform1f(zap, offset);
+		
+		int vertexColorLocation = glGetUniformLocation(shaderProgramLeft, "ourColor");
+		glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
+
+		glm::mat4 transTriangle = glm::mat4(1.0f);
+		transTriangle = glm::scale(transTriangle, glm::vec3(sin(timeValue), cos(timeValue), tan(timeValue)));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgramLeft, "dynamicScale"), 1, GL_FALSE, glm::value_ptr(transTriangle));
+
 
 		glBindVertexArray(VAOs[0]);  
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
