@@ -69,11 +69,47 @@ int main() {
 			-0.5f, 0.5f, 0.0f};
 
 	float verticesRight[] = {
-			 1.0f, 0.5f, 0.0f,    1.0f, 1.0f,
-			 1.0f,-0.5f, 0.0f,    1.0f, 0.0f,
-			 0.0f,-0.5f, 0.0f,    0.0f, 0.0f,
-			 0.0f, 0.5f, 0.0f,    0.0f, 1.0f};
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f };
 	
 	unsigned int indices [] = {
 			 0, 1, 3,
@@ -90,7 +126,7 @@ int main() {
 	unsigned int VBOs[2], VAOs[2], EBO;
 	glGenVertexArrays(2, VAOs);
 	glGenBuffers(2, VBOs);
-	glGenBuffers(1, &EBO);
+	//glGenBuffers(1, &EBO);
 	
 	
 	glBindVertexArray(VAOs[0]);
@@ -105,8 +141,8 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRight), verticesRight, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3,  GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -169,7 +205,7 @@ int main() {
 	//glBindBuffer(GL_ARRAY_BUFFER, 0); // Отвязываем VBO
 	//glBindVertexArray(0); // Отвязываем VAO
 
-	
+	glEnable(GL_DEPTH_TEST);	
 
 	// Цикл рендеринга в окне
 	while (!glfwWindowShouldClose(window))
@@ -177,8 +213,8 @@ int main() {
 		processInput(window);
 		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+/*
 		/////////// Левый /////////////////////////////
 		glUseProgram(shaderProgramLeft);
 		float timeValue		= glfwGetTime();
@@ -200,7 +236,7 @@ int main() {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		//////////////////////////////////////////////
 
-
+*/
 		////////// Правый ////////////////////////////
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -215,7 +251,7 @@ int main() {
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
 
-		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		
@@ -232,10 +268,10 @@ int main() {
 		glBindVertexArray(VAOs[1]);  
 		
 		//verticesRight[4] = sin(timeValue) / 2.0f + 0.5;
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		/////////////////////////////////////////////
 
@@ -246,7 +282,7 @@ int main() {
 
 	glDeleteVertexArrays(2, VAOs);
 	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(1, &EBO);
+	//glDeleteBuffers(1, &EBO);
 
 	glfwTerminate();
 
