@@ -27,6 +27,58 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 
 
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp= glm::vec3(0.0f, 1.0f, 0.0f);
+
+
+float lastX = 800/2.0;
+float lastY = 600/2.0;
+bool firstMouse = true;
+float yaw = -90.0f;
+float pitch = 0.0f;
+float fov = 45.0f;
+
+void mouseCallback(GLFWwindow* window, double xpos, double ypos){
+	if(firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.05;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+	
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(direction);
+}
+
+void scrollBack(GLFWwindow* window, double xoffset, double yoffset){
+	if(fov > 1.0f && fov < 45.0f)
+		fov -= yoffset;
+	else if(fov <= 1.0f)
+		fov = 1.0f;
+	else if(fov >= 45.0f)
+		fov = 45.0f;
+}
+
 const unsigned int	SRC_WIDTH = 1000;
 const unsigned int	SRC_HEIGHT = 800;
 
@@ -52,6 +104,8 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouseCallback);
+	glfwSetScrollCallback(window, scrollBack);
 
 	// glad загрузка всех указателей на OpenGL-функции
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -224,7 +278,7 @@ int main() {
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramRight, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-
+	
 
 	// Цикл рендеринга в окне
 	while (!glfwWindowShouldClose(window))
@@ -233,29 +287,9 @@ int main() {
 		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-/*
-		/////////// Левый /////////////////////////////
-		glUseProgram(shaderProgramLeft);
-		float timeValue		= glfwGetTime();
-		float redValue		= tan(timeValue) / 2.0f + 0.5f;
-		float greenValue 	= -sin(timeValue) / 2.0f + 0.5f;
-		float blueValue		= cos(timeValue) / 2.0f + 0.5f;
-
-		
-		int vertexColorLocation = glGetUniformLocation(shaderProgramLeft, "ourColor");
-		glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
-
-		glm::mat4 transTriangle = glm::mat4(1.0f);
-		transTriangle = glm::scale(transTriangle, glm::vec3(sin(timeValue), cos(timeValue), tan(timeValue)));
-		glUniformMatrix4fv(glGetUniformLocation(shaderProgramLeft, "dynamicScale"), 1, GL_FALSE, glm::value_ptr(transTriangle));
 
 
-		glBindVertexArray(VAOs[0]);  
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		//////////////////////////////////////////////
 
-*/
 		////////// Правый ////////////////////////////
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -273,27 +307,29 @@ int main() {
 
 		//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		
-
+/*
 		glm::mat4 view = glm::mat4(1.0);
 		float radius = 10.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
-		view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+*/
+		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SRC_WIDTH/(float)SRC_HEIGHT, 0.1f, 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgramRight, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		glUniformMatrix4fv(glGetUniformLocation(shaderProgramRight, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-
+		
+		
 
 
 		glBindVertexArray(VAOs[1]);  
 		
-		//verticesRight[4] = sin(timeValue) / 2.0f + 0.5;
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		for (int i=0; i<10; i++){
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f *i;
-			model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 			glUniformMatrix4fv(glGetUniformLocation(shaderProgramRight, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
