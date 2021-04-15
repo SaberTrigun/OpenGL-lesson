@@ -201,7 +201,9 @@ int main() {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramCube, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	glUseProgram(shaderProgramLight);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramLight, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	
+
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;	
 	// Цикл рендеринга в окне
 	while (!glfwWindowShouldClose(window))
 	{
@@ -210,12 +212,18 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		float lightPos_X = 1.0f + sin(glfwGetTime()) * 2.0f;
+		float lightPos_Y = sin(glfwGetTime() / 2.0f) * 1.0f;		
 
 		glUseProgram(shaderProgramCube);
 		// Задаём цвета для куба и лампы
 		glUniform3f(glGetUniformLocation(shaderProgramCube, "objectColor"), 1.0f, 0.5f, 0.31f);
 		glUniform3f(glGetUniformLocation(shaderProgramCube, "lightColor"), 1.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(shaderProgramCube, "lightPos"), 1.2f, 1.0f, 2.0f);
+		glUniform3f(glGetUniformLocation(shaderProgramCube, "lightPos"), lightPos_X, lightPos_Y, 2.0f);
 		glUniform3f(glGetUniformLocation(shaderProgramCube, "viewPos"), 0.0f, 0.0f, 0.3f);
 		
 		glm::mat4 model = glm::mat4(1.0f);
@@ -237,7 +245,11 @@ int main() {
 
 
 		model = glm::mat4(1.0f);
-		model = translate(model, glm::vec3(1.2f, 1.0f, 2.0f));
+ 
+		model = translate(model, glm::vec3(lightPos_X, lightPos_Y, 2.0f));
+		
+		
+		
 		model = scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		glUniformMatrix4fv(glGetUniformLocation(shaderProgramLight, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(shaderProgramLight, "view"), 1, GL_FALSE, glm::value_ptr(view));
