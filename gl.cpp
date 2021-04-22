@@ -35,9 +35,8 @@ unsigned int SRC_HEIGHT	= 600;
 			int 		success;
 			char 		infolog [512];
 			char const* 	shaderSrcPtr;
-			//std::ifstream	shaderStream;
 		public:
-			void loadCompileShader(const char* shaderFilePath, std::string typeShaderIn){
+			int loadCompileShader(const char* shaderFilePath, std::string typeShaderIn){
 				if (typeShaderIn == "vertex"){
 					typeShader = glCreateShader(GL_VERTEX_SHADER);
 					std::ifstream shaderStream(shaderFilePath, std::ios::in);
@@ -55,6 +54,7 @@ unsigned int SRC_HEIGHT	= 600;
 					glGetShaderInfoLog(typeShader, 512, NULL, infolog);
 					std::cout << "Error vertexShader compile..." << infolog << std::endl;
 				}
+				return typeShader;
 				}
 				else if (typeShaderIn == "fragment"){
 					typeShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -73,12 +73,32 @@ unsigned int SRC_HEIGHT	= 600;
 					glGetShaderInfoLog(typeShader, 512, NULL, infolog);
 					std::cout << "Error fragmentShader compile..." << infolog << std::endl;
 				}
+				return typeShader;
 				}
+				return -1;
 			}
-			//ShaderProgram(){}
-			//deleteShader(){}
-	};
+			void createProgram(Shader, Shader);
+			void deleteProgram(Shader, Shader);
 
+						
+	};
+	
+	void Shader::createProgram(Shader vertex, Shader fragment){
+		shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, vertex.typeShader);
+		glAttachShader(shaderProgram, fragment.typeShader);
+		glLinkProgram(shaderProgram);
+		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+		if (!success){
+			glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
+			std::cout << "Error shaderProgram compile..." << infolog << std::endl;
+		}
+	}
+	void Shader::deleteProgram(Shader vertex, Shader fragment){
+		glDeleteShader(vertex.typeShader);
+		glDeleteShader(fragment.typeShader);
+	}
+		
 
 
 
@@ -107,10 +127,10 @@ int main() {
 		return -1;
 	}
 
-	Shader vertexShader, fragmentShader;
+	Shader vertexShader, fragmentShader, shaderProg;
 	vertexShader.loadCompileShader("shaders/lessFive/vertexShaderRight.src", "vertex");
 	fragmentShader.loadCompileShader("shaders/lessFive/fragmentShaderRight.src", "fragment");
-
+	shaderProg.createProgram(vertexShader, fragmentShader);
 	
 
 	// Цикл рендеринга в окне
