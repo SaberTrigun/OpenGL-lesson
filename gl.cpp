@@ -11,6 +11,7 @@
 #include "include/glm/glm/glm.hpp"
 #include "include/glm/glm/gtc/matrix_transform.hpp"
 #include "include/glm/glm/gtc/type_ptr.hpp"
+#include "shaderClass.cpp"
 // void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // void processInput(GLFWwindow *window);
 // Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш на клавиатуре
@@ -27,79 +28,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 unsigned int SRC_WIDTH	= 800;
 unsigned int SRC_HEIGHT	= 600;
 
-
-	class Shader{
-		private:
-			unsigned int 	typeShader, shaderProgram;
-			std::string	shaderSrc;
-			int 		success;
-			char 		infolog [512];
-			char const* 	shaderSrcPtr;
-		public:
-			int loadCompileShader(const char* shaderFilePath, std::string typeShaderIn){
-				if (typeShaderIn == "vertex"){
-					typeShader = glCreateShader(GL_VERTEX_SHADER);
-					std::ifstream shaderStream(shaderFilePath, std::ios::in);
-					if (shaderStream.is_open()){
-						std::stringstream sstr;
-						sstr << shaderStream.rdbuf();
-						shaderSrc = sstr.str();
-						shaderStream.close();
-					}
-				shaderSrcPtr = shaderSrc.c_str();
-				glShaderSource(typeShader, 1, &shaderSrcPtr, NULL);
-				glCompileShader(typeShader);
-				glGetShaderiv(typeShader, GL_COMPILE_STATUS, &success);
-				if (!success){
-					glGetShaderInfoLog(typeShader, 512, NULL, infolog);
-					std::cout << "Error vertexShader compile..." << infolog << std::endl;
-				}
-				return typeShader;
-				}
-				else if (typeShaderIn == "fragment"){
-					typeShader = glCreateShader(GL_FRAGMENT_SHADER);
-					std::ifstream shaderStream(shaderFilePath, std::ios::in);
-					if (shaderStream.is_open()){
-						std::stringstream sstr;
-						sstr << shaderStream.rdbuf();
-						shaderSrc = sstr.str();
-						shaderStream.close();
-					}
-				shaderSrcPtr = shaderSrc.c_str();
-				glShaderSource(typeShader, 1, &shaderSrcPtr, NULL);
-				glCompileShader(typeShader);
-				glGetShaderiv(typeShader, GL_COMPILE_STATUS, &success);
-				if (!success){
-					glGetShaderInfoLog(typeShader, 512, NULL, infolog);
-					std::cout << "Error fragmentShader compile..." << infolog << std::endl;
-				}
-				return typeShader;
-				}
-				return -1;
-			}
-			void createProgram(Shader, Shader);
-			void deleteProgram(Shader, Shader);
-
-						
-	};
 	
-	void Shader::createProgram(Shader vertex, Shader fragment){
-		shaderProgram = glCreateProgram();
-		glAttachShader(shaderProgram, vertex.typeShader);
-		glAttachShader(shaderProgram, fragment.typeShader);
-		glLinkProgram(shaderProgram);
-		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-		if (!success){
-			glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
-			std::cout << "Error shaderProgram compile..." << infolog << std::endl;
-		}
-	}
-	void Shader::deleteProgram(Shader vertex, Shader fragment){
-		glDeleteShader(vertex.typeShader);
-		glDeleteShader(fragment.typeShader);
-	}
-		
-
 
 
 int main() {
@@ -127,11 +56,16 @@ int main() {
 		return -1;
 	}
 
+
+
+
 	Shader vertexShader, fragmentShader, shaderProg;
-	vertexShader.loadCompileShader("shaders/lessFive/vertexShaderRight.src", "vertex");
-	fragmentShader.loadCompileShader("shaders/lessFive/fragmentShaderRight.src", "fragment");
+	vertexShader.loadCompileShader("shaders/lessOne/vertexShader.src", "vertex");
+	fragmentShader.loadCompileShader("shaders/lessOne/fragmentShader.src", "fragment");
 	shaderProg.createProgram(vertexShader, fragmentShader);
-	
+	shaderProg.deleteShader(vertexShader, fragmentShader);
+
+
 
 	// Цикл рендеринга в окне
 	while (!glfwWindowShouldClose(window))
@@ -139,15 +73,13 @@ int main() {
 		processInput(window);
 		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT);
 
 
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
 
 	glfwTerminate();
 
