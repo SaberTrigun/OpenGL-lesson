@@ -12,8 +12,6 @@
 #include "include/glm/glm/gtc/matrix_transform.hpp"
 #include "include/glm/glm/gtc/type_ptr.hpp"
 #include "shaderClass.cpp"
-// void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-// void processInput(GLFWwindow *window);
 // Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш на клавиатуре
 void processInput(GLFWwindow *window)
 {
@@ -56,14 +54,32 @@ int main() {
 		return -1;
 	}
 
-
+	float vertices[] = {
+    // координаты         // цвета
+	 0.5f, -0.5f, 0.0f,   // нижняя правая вершина
+	-0.5f, -0.5f, 0.0f,   // нижняя левая вершина
+	 0.0f,  0.5f, 0.0f};    // верхняя вершина
+ 
 
 
 	Shader vertexShader, fragmentShader, shaderProg;
-	vertexShader.loadCompileShader("shaders/lessOne/vertexShader.src", "vertex");
-	fragmentShader.loadCompileShader("shaders/lessOne/fragmentShader.src", "fragment");
+	vertexShader.loadCompileShader("shaders/lessTwo/vertexShaderLeft.src", "vertex");
+	fragmentShader.loadCompileShader("shaders/lessTwo/fragmentShaderLeft.src", "fragment");
 	shaderProg.createProgram(vertexShader, fragmentShader);
 	shaderProg.deleteShader(vertexShader, fragmentShader);
+
+
+	unsigned int VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
 
 
 
@@ -75,12 +91,19 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		shaderProg.useProgram();
+		float timeValue = glfwGetTime();
+		float greenValue = sin(timeValue) / 2.0f + 0.5f;
+		shaderProg.setVec4("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
+		glBindVertexArray(VAO);
+    		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 
 	return 0;

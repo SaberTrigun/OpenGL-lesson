@@ -48,4 +48,15 @@ class Shader{
 			glUseProgram(shaderProgram);
 		}
 						
+		void setVec3(const std::string uniVar, float x, float y, float z){
+			glUniform3f(glGetUniformLocation(shaderProgram, uniVar.c_str()), x, y, z);
+		}
+		void setVec4(const std::string uniVar, float x, float y, float z, float w){
+			glUniform4f(glGetUniformLocation(shaderProgram, uniVar.c_str()), x, y, z, w);
+		}
+		void setMat4(const std::string uniVar, const glm::mat4 &mat){
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, uniVar.c_str()), 1, GL_FALSE, &mat[0][0]);
+		}
+
+
 };
