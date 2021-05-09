@@ -1,3 +1,11 @@
+#include "include/glad/glad.h"
+#include "include/glm/glm/glm.hpp"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+enum Shader_Type{VERTEX, FRAGMENT, GEOMETRIC};
 class Shader{
 	private:
 		unsigned int 	typeShader, shaderProgram;
@@ -6,10 +14,10 @@ class Shader{
 		char 		infolog [512];
 		char const* 	shaderSrcPtr;
 	public:
-		void loadCompileShader(const char* shaderFilePath, std::string typeShaderIn){
-			if (typeShaderIn == "vertex")
+		void loadCompileShader(const char* shaderFilePath, Shader_Type typeShaderIn){
+			if (typeShaderIn == VERTEX)
 				typeShader = glCreateShader(GL_VERTEX_SHADER);
-			else if (typeShaderIn == "fragment")
+			else if (typeShaderIn == FRAGMENT)
 				typeShader = glCreateShader(GL_FRAGMENT_SHADER);
 			std::ifstream shaderStream(shaderFilePath, std::ios::in);
 			if (shaderStream.is_open()){
