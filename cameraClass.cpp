@@ -76,4 +76,4 @@ class Camera{
 			if (zoom >= 45.0f)
 				zoom = 45.0f;
 		}
-};
+};			
