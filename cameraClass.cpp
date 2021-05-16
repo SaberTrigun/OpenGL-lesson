@@ -7,7 +7,6 @@ const float ZOOM	= 45.0f;
 
 class Camera{
 	private:
-		glm::vec3 position;
 		//glm::vec3 target;
 		glm::vec3 front;
 		glm::vec3 up;
@@ -29,6 +28,7 @@ class Camera{
 			up = glm::normalize(glm::cross(right, front)); 
 			}
 	public:
+		glm::vec3 position;
 		Camera (glm::vec3 camPos) : position(camPos), front(glm::vec3(0.0f, 0.0f, -1.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)) {
 			yaw			= YAW;
 			pitch			= PITCH;
@@ -59,11 +59,13 @@ class Camera{
 			y_offset	*= mouseSensitivity;
 			yaw		+= x_offset;
 			pitch		+= y_offset;
+			std::cout << "YAW " << yaw << std::endl;
+			std::cout << "PITCH " << pitch << std::endl;
 
 			if(constrainPitch){
 				if(pitch > 89.0f)
 					pitch = 89.0f;
-				if(pitch< -89.0f)
+				if(pitch < -89.0f)
 					pitch = -89.0f;
 			}
 			updateCameraVectors();

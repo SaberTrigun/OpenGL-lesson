@@ -110,11 +110,11 @@ int main() {
 
 	Shader vertexShaderCube, fragmentShaderCube, shaderProgCube, vertexShaderLight, fragmentShaderLight, shaderProgLight;
 	//Куб
-	vertexShaderCube.loadCompileShader("shaders/lessSix-Seven/vertexShaderCube.src", VERTEX);
-	fragmentShaderCube.loadCompileShader("shaders/lessSix-Seven/fragmentShaderCube.src", FRAGMENT);
+	vertexShaderCube.loadCompileShader("shaders/lessEight/vertexShaderCube.src", VERTEX);
+	fragmentShaderCube.loadCompileShader("shaders/lessEight/fragmentShaderCube.src", FRAGMENT);
 	//Лампа
-	vertexShaderLight.loadCompileShader("shaders/lessSix-Seven/vertexShaderLight.src", VERTEX);
-	fragmentShaderLight.loadCompileShader("shaders/lessSix-Seven/fragmentShaderLight.src", FRAGMENT);
+	vertexShaderLight.loadCompileShader("shaders/lessEight/vertexShaderLight.src", VERTEX);
+	fragmentShaderLight.loadCompileShader("shaders/lessEight/fragmentShaderLight.src", FRAGMENT);
 	//Создаём шейдерную программу
 	shaderProgCube.createProgram(vertexShaderCube, fragmentShaderCube);
 	shaderProgLight.createProgram(vertexShaderLight, fragmentShaderLight);
@@ -168,10 +168,22 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 ///////////////////////////////////////////////////////////////////////////////////////////
 		shaderProgCube.useProgram();
-		shaderProgCube.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		shaderProgCube.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		shaderProgCube.setVec3("lightPos", lightPos_x, lightPos_y, 2.0f);
-		shaderProgCube.setVec3("viewPos", 0.0f, 0.0f, 0.3f);
+		
+		shaderProgCube.setVec3("lightPos", 1.2f, 1.0f, 2.0f);
+		shaderProgCube.setVec3("viewPos", cam.position);
+
+		shaderProgCube.setVec3("light.ambient", 0.5f, 0.8f, 0.1f);
+		shaderProgCube.setVec3("light.diffuse", 0.3f, 0.2f, 0.7f);
+		shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		
+
+		shaderProgCube.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		shaderProgCube.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		shaderProgCube.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		shaderProgCube.setFloat("material.shininess", 32.0f);
+
+//		shaderProgCube.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+//		shaderProgCube.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
 
 		glm::mat4 model = glm::mat4(1.0f);
