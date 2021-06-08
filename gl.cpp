@@ -13,6 +13,8 @@
 #include "cameraClass.cpp"
 #include "controlsFunc.cpp"
 
+
+
 // glfw: всякий раз, когда изменяются размеры окна (пользователем или операционной системой)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -54,6 +56,7 @@ int main() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetScrollCallback(window, scrollCallback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	// glad загрузка всех указателей на OpenGL-функции
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -189,7 +192,7 @@ int main() {
 		glm::mat4 model = glm::mat4(1.0f);
 		shaderProgLight.setMat4("model", model);
 
-		glm::mat4 view = cam.getViewMatrix();
+		glm::mat4 view = cam.GetViewMatrix();
 		shaderProgLight.setMat4("view", view);	
 
 

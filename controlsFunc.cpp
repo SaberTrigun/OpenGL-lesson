@@ -5,13 +5,13 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		cam.processKeyboard(FORWARD, deltaTime);
+		cam.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		cam.processKeyboard(BACKWARD, deltaTime);
+		cam.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		cam.processKeyboard(LEFT, deltaTime);
+		cam.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		cam.processKeyboard(RIGHT, deltaTime);
+		cam.ProcessKeyboard(RIGHT, deltaTime);
 }
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos){
@@ -24,9 +24,9 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos){
 	float yoffset = lastY - ypos;
 	lastX = xpos;
 	lastY = ypos;
-	cam.processMouse(xoffset, yoffset);
+	cam.ProcessMouseMovement(xoffset, yoffset);
 }
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	cam.processScroll(yoffset);
+	cam.ProcessMouseScroll(yoffset);
 }
