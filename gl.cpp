@@ -29,7 +29,7 @@ unsigned int SRC_HEIGHT	= 600;
 float lastX = SRC_WIDTH / 2.0f;
 float lastY = SRC_HEIGHT / 2.0f;
 bool firstMouse = true;
-
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 	
 
 
@@ -146,9 +146,10 @@ int main() {
 	glEnableVertexAttribArray(0);
 
 	
+	
 	shaderProgCube.useProgram();
 	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH/(float)SRC_HEIGHT, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(cam.zoom), (float)SRC_WIDTH/(float)SRC_HEIGHT, 0.1f, 100.0f);
 	shaderProgCube.setMat4("projection", projection);
 	shaderProgLight.useProgram();
 	shaderProgLight.setMat4("projection", projection);
@@ -162,8 +163,8 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		float lightPos_x = 1.0f + sin(glfwGetTime()) * 2.0f;
-		float lightPos_y = sin(glfwGetTime() / 2.0f) * 1.0f;
+		//float lightPos_x = 1.0f + sin(glfwGetTime()) * 2.0f;
+		//float lightPos_y = sin(glfwGetTime() / 2.0f) * 1.0f;
 
 		processInput(window);
 		
@@ -172,21 +173,27 @@ int main() {
 ///////////////////////////////////////////////////////////////////////////////////////////
 		shaderProgCube.useProgram();
 		
-		shaderProgCube.setVec3("lightPos", 1.2f, 1.0f, 2.0f);
 		shaderProgCube.setVec3("viewPos", cam.position);
 
-		shaderProgCube.setVec3("light.ambient", 0.5f, 0.8f, 0.1f);
-		shaderProgCube.setVec3("light.diffuse", 0.3f, 0.2f, 0.7f);
-		shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-		
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
 
+		shaderProgCube.setVec3("light.ambient", ambientColor);
+		shaderProgCube.setVec3("light.diffuse", diffuseColor);
+		shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setVec3("light.position", lightPos);
+		
+		
 		shaderProgCube.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
 		shaderProgCube.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
 		shaderProgCube.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		shaderProgCube.setFloat("material.shininess", 32.0f);
+		
 
-//		shaderProgCube.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-//		shaderProgCube.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -200,18 +207,19 @@ int main() {
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 		shaderProgLight.useProgram();
 		
 		model = glm::mat4(1.0f);
-		model = translate(model, glm::vec3(lightPos_x, lightPos_y, 2.0f));
+		model = translate(model, glm::vec3(1.2f, 1.0, 2.0f));
 
 		model = scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		
 		shaderProgLight.setMat4("model", model);
 		shaderProgLight.setMat4("view", view);
-
-
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);

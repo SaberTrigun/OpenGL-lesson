@@ -18,7 +18,6 @@ class Camera{
 
 		float movementSpeed;
 		float mouseSensitivity;
-		float zoom;
 		
 		void UpdateCameraVectors(){
 			glm::vec3 Front;
@@ -32,6 +31,7 @@ class Camera{
 		}
 	public:
 		glm::vec3 position;
+		float zoom;
 		Camera (glm::vec3 cameraPosition ) : position(cameraPosition), front(glm::vec3(0.0f, 0.0f, -1.0f)), worldUp(glm::vec3(0.0f, 1.0f, 0.0f)){
 			yaw			= YAW;
 			pitch			= PITCH;
