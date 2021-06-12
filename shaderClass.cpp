@@ -55,6 +55,9 @@ class Shader{
 		void useProgram(){
 			glUseProgram(shaderProgram);
 		}
+		void setInt(const std::string& name, const int value){
+			glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), value);
+		}
 						
 		void setVec3(const std::string& name, const glm::vec3 &value){ 
 			glUniform3fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]);
