@@ -202,12 +202,16 @@ int main() {
 		shaderProgCube.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		shaderProgCube.setVec3("light.position", lightPos);
+
+		shaderProgCube.setFloat("light.constant", 1.0f);
+		shaderProgCube.setFloat("light.linear", 0.09f);
+		shaderProgCube.setFloat("light.quadratic", 0.032f);
 		
 		
 		//shaderProgCube.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
 		//shaderProgCube.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		shaderProgCube.setFloat("material.shininess", 64.0f);
-		shaderProgCube.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+		//shaderProgCube.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
 		
 
 
@@ -245,7 +249,6 @@ int main() {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-		/*
 		shaderProgLight.useProgram();
 		
 		model = glm::mat4(1.0f);
@@ -258,7 +261,6 @@ int main() {
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		*/
 //////////////////////////////////////////////////////////////////////////////////////////
 
 		glfwSwapBuffers(window);
