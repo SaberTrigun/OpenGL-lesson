@@ -8,7 +8,6 @@ const float ZOOM	= 45.0f;
 
 class Camera{
 	private:
-		glm::vec3 front;
 		glm::vec3 up;
 		glm::vec3 right;
 		glm::vec3 worldUp;
@@ -30,6 +29,7 @@ class Camera{
 			up	= glm::normalize(glm::cross(right, front));
 		}
 	public:
+		glm::vec3 front;
 		glm::vec3 position;
 		float zoom;
 		Camera (glm::vec3 cameraPosition ) : position(cameraPosition), front(glm::vec3(0.0f, 0.0f, -1.0f)), worldUp(glm::vec3(0.0f, 1.0f, 0.0f)){

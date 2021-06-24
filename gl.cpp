@@ -198,10 +198,10 @@ int main() {
 		
 		shaderProgCube.setVec3("viewPos", cam.position);
 
-		shaderProgCube.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		shaderProgCube.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+		shaderProgCube.setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
+		shaderProgCube.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
 		shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-		shaderProgCube.setVec3("light.position", lightPos);
+		shaderProgCube.setVec3("light.position", cam.position);
 
 		shaderProgCube.setFloat("light.constant", 1.0f);
 		shaderProgCube.setFloat("light.linear", 0.09f);
@@ -210,8 +210,10 @@ int main() {
 		
 		//shaderProgCube.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
 		//shaderProgCube.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-		shaderProgCube.setFloat("material.shininess", 64.0f);
-		//shaderProgCube.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+		shaderProgCube.setFloat("material.shininess", 32.0f);
+		shaderProgCube.setVec3("light.direction", cam.front);
+		shaderProgCube.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		shaderProgCube.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 		
 
 
