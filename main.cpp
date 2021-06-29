@@ -121,15 +121,22 @@ int main() {
 			glm::vec3( 1.5f, 0.2f, -1.5f),
 			glm::vec3(-1.3f, 1.0f, -1.5f) };
 
+	glm::vec3 pointLightPosition[] = {
+		glm::vec3(0.7f, 0.2f, 2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f, 2.0f, -12.0f),
+		glm::vec3(0.0f, 0.0f, -3.0f)
+	};
+		
 
 
 	Shader vertexShaderCube, fragmentShaderCube, shaderProgCube, vertexShaderLight, fragmentShaderLight, shaderProgLight;
 	//Куб
-	vertexShaderCube.loadCompileShader("shaders/lessTen/vertexShaderCube.src", VERTEX);
-	fragmentShaderCube.loadCompileShader("shaders/lessTen/fragmentShaderCube.src", FRAGMENT);
+	vertexShaderCube.loadCompileShader("shaders/lessEleven/vertexShaderCube.src", VERTEX);
+	fragmentShaderCube.loadCompileShader("shaders/lessEleven/fragmentShaderCube.src", FRAGMENT);
 	//Лампа
-	vertexShaderLight.loadCompileShader("shaders/lessTen/vertexShaderLight.src", VERTEX);
-	fragmentShaderLight.loadCompileShader("shaders/lessTen/fragmentShaderLight.src", FRAGMENT);
+	vertexShaderLight.loadCompileShader("shaders/lessEleven/vertexShaderLight.src", VERTEX);
+	fragmentShaderLight.loadCompileShader("shaders/lessEleven/fragmentShaderLight.src", FRAGMENT);
 	//Создаём шейдерную программу
 	shaderProgCube.createProgram(vertexShaderCube, fragmentShaderCube);
 	shaderProgLight.createProgram(vertexShaderLight, fragmentShaderLight);
@@ -198,24 +205,64 @@ int main() {
 		
 		shaderProgCube.setVec3("viewPos", cam.position);
 
-		shaderProgCube.setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
-		shaderProgCube.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
-		shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-		shaderProgCube.setVec3("light.position", cam.position);
+		//shaderProgCube.setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
+		//shaderProgCube.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
+		//shaderProgCube.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		//shaderProgCube.setVec3("light.position", cam.position);
 
-		shaderProgCube.setFloat("light.constant", 1.0f);
-		shaderProgCube.setFloat("light.linear", 0.09f);
-		shaderProgCube.setFloat("light.quadratic", 0.032f);
+		//shaderProgCube.setFloat("light.constant", 1.0f);
+		//shaderProgCube.setFloat("light.linear", 0.09f);
+		//shaderProgCube.setFloat("light.quadratic", 0.032f);
 		
 		
 		//shaderProgCube.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
 		//shaderProgCube.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		shaderProgCube.setFloat("material.shininess", 32.0f);
-		shaderProgCube.setVec3("light.direction", cam.front);
-		shaderProgCube.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-		shaderProgCube.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+		//shaderProgCube.setVec3("light.direction", cam.front);
+		//shaderProgCube.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		//shaderProgCube.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 		
+		//Направленный свет
+		shaderProgCube.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		shaderProgCube.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+		shaderProgCube.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+		shaderProgCube.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
+		//Точечный источник света
+		shaderProgCube.setVec3("pointLights[0].position", pointLightPosition[0]);
+		shaderProgCube.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+		shaderProgCube.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+		shaderProgCube.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setFloat("pointLights[0].constant", 1.0f);
+		shaderProgCube.setFloat("pointLights[0].linear", 0.09);
+		shaderProgCube.setFloat("pointLights[0].quadratic", 0.032);
+
+		//Точечный источник света
+		shaderProgCube.setVec3("pointLights[1].position", pointLightPosition[1]);
+		shaderProgCube.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+		shaderProgCube.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+		shaderProgCube.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setFloat("pointLights[1].constant", 1.0f);
+		shaderProgCube.setFloat("pointLights[1].linear", 0.09);
+		shaderProgCube.setFloat("pointLights[1].quadratic", 0.032);
+
+		//Точечный источник света
+		shaderProgCube.setVec3("pointLights[2].position", pointLightPosition[2]);
+		shaderProgCube.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+		shaderProgCube.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+		shaderProgCube.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setFloat("pointLights[2].constant", 1.0f);
+		shaderProgCube.setFloat("pointLights[2].linear", 0.09);
+		shaderProgCube.setFloat("pointLights[2].quadratic", 0.032);
+		
+		//Точечный источник света
+		shaderProgCube.setVec3("pointLights[3].position", pointLightPosition[3]);
+		shaderProgCube.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+		shaderProgCube.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+		shaderProgCube.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setFloat("pointLights[3].constant", 1.0f);
+		shaderProgCube.setFloat("pointLights[3].linear", 0.09);
+		shaderProgCube.setFloat("pointLights[3].quadratic", 0.032);
 
 
 
