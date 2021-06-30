@@ -198,7 +198,7 @@ int main() {
 
 		processInput(window);
 		
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 ///////////////////////////////////////////////////////////////////////////////////////////
 		shaderProgCube.useProgram();
@@ -264,6 +264,17 @@ int main() {
 		shaderProgCube.setFloat("pointLights[3].linear", 0.09);
 		shaderProgCube.setFloat("pointLights[3].quadratic", 0.032);
 
+		shaderProgCube.setVec3("spotLight.position", cam.position);
+		shaderProgCube.setVec3("spotLight.direction", cam.front);
+		shaderProgCube.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+		shaderProgCube.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+		shaderProgCube.setFloat("spotLight.constant", 1.0f);
+		shaderProgCube.setFloat("spotLight.linear", 0.09f);
+		shaderProgCube.setFloat("spotLight.quadratic", 0.032);
+		shaderProgCube.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		shaderProgCube.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
 
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -299,17 +310,19 @@ int main() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 		shaderProgLight.useProgram();
+		shaderProgLight.setMat4("view", view);
 		
+		glBindVertexArray(lightVAO);
+		for (unsigned int i = 0; i < 4; i++){
 		model = glm::mat4(1.0f);
-		model = translate(model, glm::vec3(1.2f, 1.0, 2.0f));
+		model = translate(model, pointLightPosition[i]);
 
-		model = scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		model = scale(model, glm::vec3(0.2f));
 		
 		shaderProgLight.setMat4("model", model);
-		shaderProgLight.setMat4("view", view);
 
-		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 //////////////////////////////////////////////////////////////////////////////////////////
 
 		glfwSwapBuffers(window);
