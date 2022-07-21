@@ -32,13 +32,17 @@ class Camera{
 		glm::vec3 front;
 		glm::vec3 position;
 		float zoom;
-		Camera (glm::vec3 cameraPosition ) : position(cameraPosition), front(glm::vec3(0.0f, 0.0f, -1.0f)), worldUp(glm::vec3(0.0f, 1.0f, 0.0f)){
-			yaw			= YAW;
-			pitch			= PITCH;
-			movementSpeed		= SPEED;
-			mouseSensitivity	= SENSITIVITY;
-			zoom			= ZOOM;
-			UpdateCameraVectors();	
+		Camera (glm::vec3 cameraPosition ) :
+			position(cameraPosition),
+			front(glm::vec3(0.0f, 0.0f, -1.0f)),
+			worldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
+			yaw(YAW),
+			pitch(PITCH),
+			movementSpeed(SPEED),
+			mouseSensitivity(SENSITIVITY),
+			zoom(ZOOM)
+		{
+			UpdateCameraVectors();
 		}
 
 		glm::mat4 GetViewMatrix(){
